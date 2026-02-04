@@ -6,6 +6,7 @@ import {
   onSnapshot,
   query,
   orderBy,
+  where,
   serverTimestamp,
   type Unsubscribe,
 } from 'firebase/firestore'
@@ -23,6 +24,9 @@ export async function createTask(input: CreateTaskInput): Promise<string> {
     status: 'pending',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
+    userId: input.userId,
+    userDisplayName: input.userDisplayName,
+    userPhotoUrl: input.userPhotoUrl,
   })
   return docRef.id
 }
@@ -33,10 +37,15 @@ export async function deleteTask(taskId: string): Promise<void> {
 }
 
 export function subscribeToTasks(
+  userId: string,
   onUpdate: (tasks: Task[]) => void,
   onError?: (error: Error) => void
 ): Unsubscribe {
-  const q = query(tasksCollection, orderBy('createdAt', 'desc'))
+  const q = query(
+    tasksCollection,
+    where('userId', '==', userId),
+    orderBy('createdAt', 'desc')
+  )
 
   return onSnapshot(
     q,

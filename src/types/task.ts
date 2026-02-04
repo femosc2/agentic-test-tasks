@@ -17,9 +17,15 @@ export interface Task {
   createdAt: Timestamp
   updatedAt: Timestamp
   result?: TaskResult
+  userId: string
+  userDisplayName: string | null
+  userPhotoUrl: string | null
 }
 
 export interface CreateTaskInput {
   title: string
   description?: string
+  userId: string
+  userDisplayName: string | null
+  userPhotoUrl: string | null
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { createTask } from '../../services/taskService'
+import { useAuth } from '../../hooks/useAuth'
 import styles from './styles.module.scss'
 
 export function TaskForm() {
+  const { user } = useAuth()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -10,7 +12,7 @@ export function TaskForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title.trim()) return
+    if (!title.trim() || !user) return
 
     setIsSubmitting(true)
     setError(null)
@@ -19,6 +21,9 @@ export function TaskForm() {
       await createTask({
         title: title.trim(),
         description: description.trim() || undefined,
+        userId: user.uid,
+        userDisplayName: user.displayName,
+        userPhotoUrl: user.photoURL,
       })
       setTitle('')
       setDescription('')
